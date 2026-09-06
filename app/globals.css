@@ -1,0 +1,94 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  --color-bg: #0a0a0f;
+  --color-surface: #14141d;
+  --color-surface-2: #1c1c28;
+  --color-border: #2a2a3a;
+
+  --color-violet-glow: #8b5cf6;
+  --color-indigo-glow: #6366f1;
+  --color-money: #34d399;
+  --color-danger: #f87171;
+  --color-amber: #fbbf24;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background-color: var(--color-bg);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(139, 92, 246, 0.15), transparent),
+    radial-gradient(ellipse 60% 40% at 100% 0%, rgba(99, 102, 241, 0.1), transparent);
+  background-attachment: fixed;
+  color: #e5e7eb;
+  font-family: var(--font-sans);
+  min-height: 100vh;
+}
+
+::selection {
+  background-color: rgba(139, 92, 246, 0.4);
+}
+
+@layer components {
+  .input {
+    @apply w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white placeholder-gray-600 outline-none transition focus:border-violet-500/50 focus:ring-2 focus:ring-violet-500/20;
+  }
+
+  .btn-primary {
+    @apply rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-violet-500/20 transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-secondary {
+    @apply rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm font-semibold text-gray-200 transition hover:bg-white/[0.06] disabled:cursor-not-allowed disabled:opacity-50;
+  }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3a3a4d;
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(139, 92, 246, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(139, 92, 246, 0);
+  }
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes flash-bid {
+  0% {
+    background-color: rgba(139, 92, 246, 0.25);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+.animate-flash-bid {
+  animation: flash-bid 1.2s ease-out;
+}
