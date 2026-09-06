@@ -1,0 +1,121 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  displayName  String
+  createdAt    DateTime @default(now())
+
+  wallet          Wallet?
+  auctionsCreated Auction[]      @relation("SellerAuctions")
+  bids            Bid[]
+  notifications   Notification[]
+}
+
+model Wallet {
+  id     String @id @default(uuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+  /// Available balance, in cents.
+  balance    Int      @default(0)
+  /// Sum currently held in escrow across this user's active bids, in cents.
+  heldAmount Int      @default(0)
+  updatedAt  DateTime @updatedAt
+}
+
+enum AuctionMechanismType {
+  ENGLISH
+  DUTCH
+  SEALED_FIRST_PRICE
+  VICKREY
+}
+
+enum AuctionStatus {
+  OPEN
+  CLOSED
+  CANCELLED
+}
+
+model Auction {
+  id           String               @id @default(uuid())
+  title        String
+  description  String?
+  mechanism    AuctionMechanismType
+  status       AuctionStatus        @default(OPEN)
+  /// All money fields are in cents to avoid floating point error.
+  reservePrice Int
+  /// English only: minimum amount a new bid must exceed the current highest by.
+  minIncrement Int?
+  /// Dutch only: price the clock starts at.
+  startPrice   Int?
+
+  sellerId String
+  seller   User   @relation("SellerAuctions", fields: [sellerId], references: [id])
+
+  winnerId      String?
+  clearingPrice Int?
+
+  createdAt DateTime @default(now())
+  /// When bidding ends. Bids landing inside the anti-snipe window push this back.
+  closesAt  DateTime
+  closedAt  DateTime?
+
+  bids Bid[]
+
+  @@index([status])
+  @@index([status, closesAt])
+}
+
+enum BidStatus {
+  ACTIVE
+  OUTBID
+  WON
+  LOST
+  REFUNDED
+}
+
+model Bid {
+  id        String  @id @default(uuid())
+  auctionId String
+  auction   Auction @relation(fields: [auctionId], references: [id])
+  bidderId  String
+  bidder    User    @relation(fields: [bidderId], references: [id])
+  /// Bid amount in cents.
+  amount Int
+  /// Amount held in escrow for this specific bid, in cents.
+  heldAmount Int
+  status     BidStatus @default(ACTIVE)
+  createdAt  DateTime  @default(now())
+
+  @@index([auctionId])
+  @@index([bidderId])
+}
+
+enum NotificationType {
+  OUTBID
+  AUCTION_WON
+  AUCTION_LOST
+  AUCTION_SOLD
+  AUCTION_UNSOLD
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id])
+  type      NotificationType
+  message   String
+  auctionId String?
+  read      Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  @@index([userId, read])
+}
