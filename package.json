@@ -1,0 +1,46 @@
+{
+  "name": "auction-game",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Real-time auction & stable-matching engine — Next.js + PostgreSQL + Prisma",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "dev": "tsx watch server.ts",
+    "build": "prisma generate && next build",
+    "start": "NODE_ENV=production tsx server.ts",
+    "postinstall": "prisma generate",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "db:studio": "prisma studio"
+  },
+  "dependencies": {
+    "@prisma/client": "6.19.3",
+    "@socket.io/redis-adapter": "8.3.0",
+    "bcryptjs": "3.0.3",
+    "bullmq": "6.3.4",
+    "ioredis": "6.0.0",
+    "jsonwebtoken": "9.0.3",
+    "next": "16.3.4",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "socket.io": "4.8.3",
+    "socket.io-client": "4.8.3",
+    "zod": "4.5.4"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "4.3.3",
+    "@types/jsonwebtoken": "9.0.10",
+    "@types/node": "22.13.1",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.7",
+    "prisma": "6.19.3",
+    "tailwindcss": "4.3.3",
+    "tsx": "4.23.13",
+    "typescript": "5.7.3",
+    "vitest": "5.0.0"
+  }
+}
